@@ -1,0 +1,14 @@
+<resources>
+    <string name="app_name">MyBooks</string>
+    <string name="main_title">Начни читать</string>
+    <string name="headline_start">Начни читать!</string>
+    <string name="blazhen_nezlobivyj_poet_contetDescription">Стихотворение Блажен незлобливый поэт</string>
+    <string name="main_list_starttext">БУДЕТ НАЗВАНИЕ</string>
+    <string name="back">На главную</string>
+    <string name="NextPage">Следующая глава</string>
+    <string name="PreviousPage">Предыдущая глава</string>
+    <string name="prev">Назад</string>
+    <string name="next">Дальше</string>
+    <string name="navigate">навигация</string>
+    <string name="navigation">введите главу</string>
+</resources>
