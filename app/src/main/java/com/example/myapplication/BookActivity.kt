@@ -59,9 +59,9 @@ class BookActivity : AppCompatActivity() {
             intent = Intent(this, BookActivity::class.java)
             intent.putExtra("PATH", path)
             intent.putExtra("TITLE", title)
-            prefs.edit().apply {
+            prefs.edit {
                 putInt(title, id + 1)
-            }.apply()
+            }
             Log.d("MY_TAG", scroll.scrollY.toString())
             scroll.scrollTo(0, 0)
             startActivity(intent)
@@ -71,9 +71,9 @@ class BookActivity : AppCompatActivity() {
             intent = Intent(this, BookActivity::class.java)
             intent.putExtra("PATH", path)
             intent.putExtra("TITLE", title)
-            prefs.edit().apply {
+            prefs.edit {
                 putInt(title, id - 1)
-            }.apply()
+            }
             scroll.scrollTo(0, 0)
             startActivity(intent)
         }
@@ -98,9 +98,13 @@ class BookActivity : AppCompatActivity() {
         super.onPause()
         val prefs = getSharedPreferences("page_saves", Context.MODE_PRIVATE)
         val scroll = findViewById<androidx.core.widget.NestedScrollView>(R.id.scroll_view)
-        prefs.edit().apply {
+        prefs.edit {
             putInt(title + "scroll", scroll.scrollY)
-        }.apply()
+        }
+        if( scroll.getChildAt(0).height - scroll.height == scroll.scrollY) {
+            prefs.edit { remove(title + "scroll") }
+            prefs.edit { remove(title) }
+        }
         Log.d("MY_TAG", scroll.scrollY.toString())
     }
 }
