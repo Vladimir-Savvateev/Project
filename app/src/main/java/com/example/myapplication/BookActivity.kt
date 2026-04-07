@@ -17,6 +17,8 @@ import android.util.Log
 import android.view.KeyEvent
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.launch
 
 class BookActivity : AppCompatActivity() {
 
@@ -32,7 +34,7 @@ class BookActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
-
+        val downloader = GitDownloader()
         title = intent.getStringExtra("TITLE")!!
         val prefs = getSharedPreferences("page_saves", Context.MODE_PRIVATE)
         id = prefs.getInt(title, 0)
@@ -80,11 +82,23 @@ class BookActivity : AppCompatActivity() {
             changePages.visibility = View.GONE
        }
 
+
         inputStream.read(buffer)
         inputStream.close()
         bookTitle.text = title
         content.text = String(buffer, Charsets.UTF_8)
         val back = findViewById<Button>(R.id.back)
+
+        lifecycleScope.launch{
+            val result = downloader.loadTextFile("https://raw.githubusercontent.com/Vladimir-Savvateev/books/refs/heads/main/" + path[id])
+            result.onSuccess { res ->
+                content.text = res
+            }
+            result.onFailure { error ->
+                content.text = error.message
+            }
+
+        }
 
         back.setOnClickListener {
             intent = Intent(this, MainActivity::class.java)
