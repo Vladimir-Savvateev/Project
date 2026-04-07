@@ -46,10 +46,7 @@ class BookActivity : AppCompatActivity() {
         }
         val bookTitle = findViewById<TextView>(R.id.book_title)
         val content = findViewById<TextView>(R.id.book_content)
-        val inputStream = assets.open(path[id])
         val changePages = findViewById<EditText>(R.id.change_page)
-        val size = inputStream.available()
-        val buffer = ByteArray(size)
         changePages.setHint("Введите номер страницы от 1 до ${path.size}")
         changePages.textSize = 10.0F
         changePages.setOnEditorActionListener{ _, actionId, event ->
@@ -64,15 +61,21 @@ class BookActivity : AppCompatActivity() {
                     Toast.makeText(this,"Вы ввели номер не существующей страницы",Toast.LENGTH_SHORT).show()
                 }
                 else {
-                    intent = Intent(this, BookActivity::class.java)
-                    intent.putExtra("PATH", path)
-                    intent.putExtra("TITLE", title)
+                    id = changePages.text.toString().toInt() - 1
+                    lifecycleScope.launch{
+                        val result = downloader.loadTextFile("https://raw.githubusercontent.com/Vladimir-Savvateev/books/refs/heads/main/" + path[id])
+                        result.onSuccess { res ->
+                            content.text = res
+                        }
+                        result.onFailure { error ->
+                            content.text = error.message
+                        }
+                    }
                     prefs.edit {
                         putInt(title, changePages.text.toString().toInt() - 1)
                     }
                     Log.d("MY_TAG", scroll.scrollY.toString())
                     scroll.scrollTo(0, 0)
-                    startActivity(intent)
                 }
                 return@setOnEditorActionListener true
             }
@@ -83,10 +86,7 @@ class BookActivity : AppCompatActivity() {
        }
 
 
-        inputStream.read(buffer)
-        inputStream.close()
         bookTitle.text = title
-        content.text = String(buffer, Charsets.UTF_8)
         val back = findViewById<Button>(R.id.back)
 
         lifecycleScope.launch{
@@ -97,7 +97,9 @@ class BookActivity : AppCompatActivity() {
             result.onFailure { error ->
                 content.text = error.message
             }
-
+            scroll.post {
+                scroll.scrollTo(0, prefs.getInt(title + "scroll", 0))
+            }
         }
 
         back.setOnClickListener {
