@@ -63,7 +63,7 @@ class BookActivity : AppCompatActivity() {
                 else {
                     id = changePages.text.toString().toInt() - 1
                     lifecycleScope.launch{
-                        val result = downloader.loadTextFile("https://raw.githubusercontent.com/Vladimir-Savvateev/books/refs/heads/main/" + path[id])
+                        val result = downloader.loadTextFile("https://raw.githubusercontent.com/Vladimir-Savvateev/books/refs/heads/main/" + "text/" + path[id])
                         result.onSuccess { res ->
                             content.text = res
                         }
@@ -88,9 +88,35 @@ class BookActivity : AppCompatActivity() {
 
         bookTitle.text = title
         val back = findViewById<Button>(R.id.back)
+        content.text = "Идёт загрузка подождите"
+//        lifecycleScope.launch{
+//            val result = downloader.loadTextFile("https://raw.githubusercontent.com/Vladimir-Savvateev/books/refs/heads/main/" + "text/" + path[id])
+//            result.onSuccess { res ->
+//                content.text = res
+//            }
+//            result.onFailure { error ->
+//                content.text = error.message
+//            }
+//            scroll.post {
+//                scroll.scrollTo(0, prefs.getInt(title + "scroll", 0))
+//            }
+//        }
 
+        back.setOnClickListener {
+            finish()
+        }
+    }
+
+
+    override fun onResume(){
+        super.onResume()
         lifecycleScope.launch{
-            val result = downloader.loadTextFile("https://raw.githubusercontent.com/Vladimir-Savvateev/books/refs/heads/main/" + path[id])
+            val path = intent.getStringArrayExtra("PATH")!!
+            val prefs = getSharedPreferences("page_saves", Context.MODE_PRIVATE)
+            val downloader = GitDownloader()
+            val scroll = findViewById<androidx.core.widget.NestedScrollView>(R.id.scroll_view)
+            val content = findViewById<TextView>(R.id.book_content)
+            val result = downloader.loadTextFile("https://raw.githubusercontent.com/Vladimir-Savvateev/books/refs/heads/main/" + "text/" + path[id])
             result.onSuccess { res ->
                 content.text = res
             }
@@ -102,15 +128,8 @@ class BookActivity : AppCompatActivity() {
             }
         }
 
-        back.setOnClickListener {
-            intent = Intent(this, MainActivity::class.java)
-            startActivity(intent)
-        }
-
-        scroll.post {
-            scroll.scrollTo(0, prefs.getInt(title + "scroll", 0))
-        }
     }
+
 
     override fun onPause() {
         super.onPause()
