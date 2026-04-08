@@ -10,7 +10,6 @@
         android:id="@+id/ImageButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:scaleType="centerCrop"
         android:layout_gravity="center_horizontal"
         android:src="@drawable/ic_blazhen_nezlobivyj_poet"
         android:contentDescription="@string/blazhen_nezlobivyj_poet_contetDescription"

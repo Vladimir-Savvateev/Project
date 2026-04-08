@@ -6,6 +6,7 @@ import android.view.ViewGroup
 import android.widget.BaseAdapter
 import android.widget.ImageView
 import android.widget.TextView
+import com.bumptech.glide.Glide
 
 class ImageListAdapter(
    context: Context,
@@ -37,13 +38,18 @@ class ImageListAdapter(
     }
     fun bindView(holder: ViewHolder, position: Int) {
         val item = items[position]
-        holder.imageView.setImageResource(item.imageId)
+        Glide.with(holder.imageView.context)
+            .load(item.imageUrl)
+            .placeholder(R.drawable.ic_placeholder)
+            .error(R.drawable.ic_error)
+            .into(holder.imageView)
         holder.textView.text = item.headLine
         holder.imageView.contentDescription = item.headLine
         holder.imageView.setOnClickListener {
             onButtonClick(item)
         }
     }
+
     class ViewHolder(view: View) {
         val imageView: ImageView = view.findViewById(R.id.ImageButton)
         val textView: TextView = view.findViewById(R.id.textView)

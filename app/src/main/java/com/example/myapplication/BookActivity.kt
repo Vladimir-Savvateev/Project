@@ -61,6 +61,7 @@ class BookActivity : AppCompatActivity() {
                     Toast.makeText(this,"Вы ввели номер не существующей страницы",Toast.LENGTH_SHORT).show()
                 }
                 else {
+                    content.text = "Идёт загрузка подождите"
                     id = changePages.text.toString().toInt() - 1
                     lifecycleScope.launch{
                         val result = downloader.loadTextFile("https://raw.githubusercontent.com/Vladimir-Savvateev/books/refs/heads/main/" + "text/" + path[id])
