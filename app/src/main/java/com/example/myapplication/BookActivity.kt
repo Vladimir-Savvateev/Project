@@ -39,7 +39,7 @@ class BookActivity : AppCompatActivity() {
         title = intent.getStringExtra("TITLE")!!
         val prefs = getSharedPreferences("page_saves", Context.MODE_PRIVATE)
         id = prefs.getInt(title, 0)
-        val path = intent.getStringArrayExtra("PATH")!!
+        val path = intent.getStringExtra("PATH")!!
         val scroll = findViewById<androidx.core.widget.NestedScrollView>(R.id.scroll_view)
         if(id < 0 || id > size - 1) {
             scroll.scrollTo(0,0)
@@ -65,7 +65,7 @@ class BookActivity : AppCompatActivity() {
                     content.text = "Идёт загрузка подождите"
                     id = changePages.text.toString().toInt() - 1
                     lifecycleScope.launch{
-                        val result = downloader.loadTextFile("https://raw.githubusercontent.com/Vladimir-Savvateev/books/refs/heads/main/" + "text/" + path[id])
+                        val result = downloader.loadTextFile("https://raw.githubusercontent.com/Vladimir-Savvateev/books/refs/heads/main/" + "text/" + path + "_" + (id + 1).toString() + ".txt")
                         result.onSuccess { res ->
                             content.text = res
                         }
@@ -91,19 +91,6 @@ class BookActivity : AppCompatActivity() {
         bookTitle.text = title
         val back = findViewById<Button>(R.id.back)
         content.text = "Идёт загрузка подождите"
-//        lifecycleScope.launch{
-//            val result = downloader.loadTextFile("https://raw.githubusercontent.com/Vladimir-Savvateev/books/refs/heads/main/" + "text/" + path[id])
-//            result.onSuccess { res ->
-//                content.text = res
-//            }
-//            result.onFailure { error ->
-//                content.text = error.message
-//            }
-//            scroll.post {
-//                scroll.scrollTo(0, prefs.getInt(title + "scroll", 0))
-//            }
-//        }
-
         back.setOnClickListener {
             finish()
         }
@@ -114,12 +101,12 @@ class BookActivity : AppCompatActivity() {
         super.onResume()
         lifecycleScope.launch{
             val size = intent.getIntExtra("SIZE",1)
-            val path = intent.getStringArrayExtra("PATH")!!
+            val path = intent.getStringExtra("PATH")!!
             val prefs = getSharedPreferences("page_saves", Context.MODE_PRIVATE)
             val downloader = GitDownloader()
             val scroll = findViewById<androidx.core.widget.NestedScrollView>(R.id.scroll_view)
             val content = findViewById<TextView>(R.id.book_content)
-            val result = downloader.loadTextFile("https://raw.githubusercontent.com/Vladimir-Savvateev/books/refs/heads/main/" + "text/" + path[id])
+            val result = downloader.loadTextFile("https://raw.githubusercontent.com/Vladimir-Savvateev/books/refs/heads/main/" + "text/" + path + "_" + (id + 1).toString() + ".txt")
             result.onSuccess { res ->
                 content.text = res
             }

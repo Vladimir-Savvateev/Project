@@ -4,5 +4,5 @@ data class ImageItem(
     val imageUrl: String,
     val headLine: String,
     val size: Int,
-    val pathTocontent: Array<String>
+    val path: String
 )
