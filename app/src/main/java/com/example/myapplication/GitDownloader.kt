@@ -9,7 +9,7 @@ import java.io.IOException
 class GitDownloader {
 
     private val githubToken = BuildConfig.GITHUB_TOKEN
-    private val client = OkHttpClient.Builder()
+    val client = OkHttpClient.Builder()
         .addInterceptor { chain ->
             val request = chain.request().newBuilder()
                 .header("Authorization", "Bearer $githubToken")

@@ -21,11 +21,11 @@ class MainActivity : AppCompatActivity() {
         val listView = findViewById<ListView>(R.id.main_listView)
 
         val items = listOf(
-            ImageItem(1,"https://raw.githubusercontent.com/Vladimir-Savvateev/books/main/ic/ic_blazhen_nezlobivyj_poet.webp","Блажен незлобливый поэт",1,"blazhen_nezloblivi_poet"),
-            ImageItem(2,"url","Шинель",1,"shinel"),
-            ImageItem(3,"url","Гроза",5,"groza_dejstvie"),
-            ImageItem(4,"url","Горе от ума",4,"gore_ot_uma"),
-            ImageItem(5,"url","Мёртвые души",12,"mertvye_dushi")
+            ImageItem(1,"blazhen_nezlobivyi_poet","Блажен незлобливый поэт",1),
+            ImageItem(2,"shinel","Шинель",1),
+            ImageItem(3,"groza_dejstvie","Гроза",5),
+            ImageItem(4,"gore_ot_uma","Горе от ума",4),
+            ImageItem(5,"mertvye_dushi","Мёртвые души",12)
         )
 
 
@@ -33,7 +33,7 @@ class MainActivity : AppCompatActivity() {
             val intent = Intent(this,BookActivity::class.java)
             intent.putExtra("SIZE",item.size)
             intent.putExtra("TITLE",item.headLine)
-            intent.putExtra("PATH",item.path)
+            intent.putExtra("PATH",item.url)
             intent.putExtra("ID",0)
             startActivity(intent)
         }

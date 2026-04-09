@@ -39,7 +39,7 @@ class ImageListAdapter(
     fun bindView(holder: ViewHolder, position: Int) {
         val item = items[position]
         Glide.with(holder.imageView.context)
-            .load(item.imageUrl)
+            .load("https://raw.githubusercontent.com/Vladimir-Savvateev/books/main/ic/" + "ic_" + item.url +  ".webp")
             .placeholder(R.drawable.ic_placeholder)
             .error(R.drawable.ic_error)
             .into(holder.imageView)
