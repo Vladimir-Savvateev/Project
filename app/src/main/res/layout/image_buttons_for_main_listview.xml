@@ -5,15 +5,15 @@
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:gravity="center_horizontal">
+
     <ImageButton
-        android:layout_marginTop="100dp"
         android:id="@+id/ImageButton"
-        android:layout_width="wrap_content"
+        android:layout_width="167dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:src="@drawable/ic_blazhen_nezlobivyj_poet"
+        android:layout_marginTop="100dp"
         android:contentDescription="@string/blazhen_nezlobivyj_poet_contetDescription"
-        />
+        android:src="@drawable/ic_blazhen_nezlobivyj_poet" />
     <TextView
         android:id="@+id/textView"
         android:layout_width="wrap_content"

@@ -35,19 +35,20 @@ class BookActivity : AppCompatActivity() {
             insets
         }
         val downloader = GitDownloader()
+        val size = intent.getIntExtra("SIZE",1)
         title = intent.getStringExtra("TITLE")!!
         val prefs = getSharedPreferences("page_saves", Context.MODE_PRIVATE)
         id = prefs.getInt(title, 0)
         val path = intent.getStringArrayExtra("PATH")!!
         val scroll = findViewById<androidx.core.widget.NestedScrollView>(R.id.scroll_view)
-        if(id < 0 || id > path.size - 1) {
+        if(id < 0 || id > size - 1) {
             scroll.scrollTo(0,0)
             id = 0
         }
         val bookTitle = findViewById<TextView>(R.id.book_title)
         val content = findViewById<TextView>(R.id.book_content)
         val changePages = findViewById<EditText>(R.id.change_page)
-        changePages.setHint("Введите номер страницы от 1 до ${path.size}")
+        changePages.setHint("Введите номер страницы от 1 до ${size.toString()}")
         changePages.textSize = 10.0F
         changePages.setOnEditorActionListener{ _, actionId, event ->
             if (actionId == EditorInfo.IME_ACTION_DONE ||
@@ -57,7 +58,7 @@ class BookActivity : AppCompatActivity() {
                     event?.keyCode == KeyEvent.KEYCODE_ENTER
                 ){
                 (getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager).hideSoftInputFromWindow(changePages.windowToken,0)
-                if(changePages.text.toString().toInt()  < 1 || changePages.text.toString().toInt()  > path.size) {
+                if(changePages.text.toString().toInt()  < 1 || changePages.text.toString().toInt()  > size) {
                     Toast.makeText(this,"Вы ввели номер не существующей страницы",Toast.LENGTH_SHORT).show()
                 }
                 else {
@@ -82,7 +83,7 @@ class BookActivity : AppCompatActivity() {
             }
             false
         }
-        if (path.size == 1) {
+        if (size == 1) {
             changePages.visibility = View.GONE
        }
 
@@ -112,6 +113,7 @@ class BookActivity : AppCompatActivity() {
     override fun onResume(){
         super.onResume()
         lifecycleScope.launch{
+            val size = intent.getIntExtra("SIZE",1)
             val path = intent.getStringArrayExtra("PATH")!!
             val prefs = getSharedPreferences("page_saves", Context.MODE_PRIVATE)
             val downloader = GitDownloader()
