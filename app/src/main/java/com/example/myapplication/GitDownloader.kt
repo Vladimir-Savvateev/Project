@@ -1,4 +1,5 @@
 package com.example.myapplication
+import com.google.gson.Gson
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import kotlinx.coroutines.Dispatchers
@@ -33,6 +34,20 @@ class GitDownloader {
             }
         } catch (e: Exception) {
             Result.failure(IOException("Ошибка Загрузки"))
+        }
+    }
+    suspend fun loadBooks(): Result<List<ImageItem>> = withContext(Dispatchers.IO) {
+        try {
+            val url = "https://raw.githubusercontent.com/Vladimir-Savvateev/books/refs/heads/main/books.json"
+            val jsonString = loadTextFile(url).getOrNull()
+            if (jsonString != null) {
+                val response = Gson().fromJson(jsonString, Books::class.java)
+                Result.success(response.books)
+            } else {
+                Result.failure(IOException("Ошибка Загрузки"))
+            }
+        } catch (e: Exception) {
+            Result.failure(e)
         }
     }
 }
