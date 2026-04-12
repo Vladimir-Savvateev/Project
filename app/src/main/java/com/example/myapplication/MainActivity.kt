@@ -46,7 +46,7 @@ class MainActivity : AppCompatActivity() {
             }
 
             result.onFailure { error ->
-                Toast.makeText(this@MainActivity, "Ошибка Загрузки", Toast.LENGTH_LONG)
+                Toast.makeText(this@MainActivity, "Ошибка Загрузки.Перезапустите приложение", Toast.LENGTH_LONG)
                     .show()
             }
         }

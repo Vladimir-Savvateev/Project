@@ -79,6 +79,8 @@ class BookActivity : AppCompatActivity() {
                     Log.d("MY_TAG", scroll.scrollY.toString())
                     scroll.scrollTo(0, 0)
                 }
+                changePages.clearFocus()
+                changePages.text.clear()
                 return@setOnEditorActionListener true
             }
             false
@@ -94,6 +96,7 @@ class BookActivity : AppCompatActivity() {
         back.setOnClickListener {
             finish()
         }
+        Log.d("TAG", "https://raw.githubusercontent.com/Vladimir-Savvateev/books/refs/heads/main/" + "text/" + path + "_" + (id + 1).toString() + ".txt")
     }
 
 
@@ -117,9 +120,7 @@ class BookActivity : AppCompatActivity() {
                 scroll.scrollTo(0, prefs.getInt(title + "scroll", 0))
             }
         }
-
     }
-
 
     override fun onPause() {
         super.onPause()
