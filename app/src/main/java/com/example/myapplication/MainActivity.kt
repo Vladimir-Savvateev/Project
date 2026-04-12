@@ -17,6 +17,15 @@ import android.widget.Toast
 import android.widget.EditText
 import androidx.core.content.edit
 import kotlinx.coroutines.launch
+
+
+fun genreChek(book: ImageItem, arg: String): Boolean {
+    for(genre in book.genres){
+        if(genre.contains(arg, ignoreCase = true))
+            return true
+    }
+    return false
+}
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -74,7 +83,7 @@ class MainActivity : AppCompatActivity() {
                     filteredBooks = allBooks
                 else {
                     filteredBooks = allBooks.filter { book ->
-                        book.headLine.contains(temporary, ignoreCase = true) || book.author.contains(temporary, ignoreCase = true)
+                        book.headLine.contains(temporary, ignoreCase = true) || book.author.contains(temporary, ignoreCase = true) || genreChek(book,temporary)
                     }
                 }
                 search.clearFocus()
