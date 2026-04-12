@@ -10,7 +10,7 @@ import com.bumptech.glide.Glide
 
 class ImageListAdapter(
    context: Context,
-   val items: List<ImageItem>,
+   var items: List<ImageItem>,
    val onButtonClick: (item: ImageItem) -> Unit
 ) : BaseAdapter() {
 
@@ -48,6 +48,12 @@ class ImageListAdapter(
         holder.imageView.setOnClickListener {
             onButtonClick(item)
         }
+    }
+
+    fun update(books: List<ImageItem>){
+
+        this.items = books
+        notifyDataSetChanged()
     }
 
     class ViewHolder(view: View) {

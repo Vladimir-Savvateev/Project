@@ -11,4 +11,5 @@
     <string name="next">Дальше</string>
     <string name="navigate">навигация</string>
     <string name="navigation">введите главу</string>
+    <string name="Search_hint">Введите название книги</string>
 </resources>

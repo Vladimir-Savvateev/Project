@@ -1,5 +1,6 @@
 package com.example.myapplication
 
+import android.content.Context
 import android.os.Bundle
 import android.widget.ListView
 import androidx.activity.enableEdgeToEdge
@@ -7,8 +8,14 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import android.content.Intent
+import android.util.Log
+import android.view.KeyEvent
+import android.view.inputmethod.EditorInfo
+import android.view.inputmethod.InputMethodManager
 import androidx.lifecycle.lifecycleScope
 import android.widget.Toast
+import android.widget.EditText
+import androidx.core.content.edit
 import kotlinx.coroutines.launch
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -30,12 +37,15 @@ class MainActivity : AppCompatActivity() {
 //            ImageItem(4,"gore_ot_uma","Горе от ума",4),
 //            ImageItem(5,"mertvye_dushi","Мёртвые души",12)
 //        )
+        lateinit var adapter: ImageListAdapter
         val downloader = GitDownloader()
-
+        var allBooks: List<ImageItem> = emptyList()
+        val search = findViewById<EditText>(R.id.main_search)
         lifecycleScope.launch {
             val result = downloader.loadBooks()
             result.onSuccess { items ->
-                val adapter = ImageListAdapter(this@MainActivity, items) { item ->
+                allBooks = items
+                adapter = ImageListAdapter(this@MainActivity, items) { item ->
                     val intent = Intent(this@MainActivity, BookActivity::class.java)
                     intent.putExtra("SIZE", item.size)
                     intent.putExtra("TITLE", item.headLine)
@@ -45,15 +55,39 @@ class MainActivity : AppCompatActivity() {
                 listView.adapter = adapter
             }
 
-            result.onFailure { error ->
+            result.onFailure { _ ->
                 Toast.makeText(this@MainActivity, "Ошибка Загрузки.Перезапустите приложение", Toast.LENGTH_LONG)
                     .show()
             }
         }
+        search.setOnEditorActionListener{ _, actionId, event ->
+            val temporary = search.text.toString()
+            if (actionId == EditorInfo.IME_ACTION_DONE ||
+                actionId == EditorInfo.IME_ACTION_GO ||
+                actionId == EditorInfo.IME_ACTION_SEND ||
+                actionId == EditorInfo.IME_ACTION_SEARCH ||
+                event?.keyCode == KeyEvent.KEYCODE_ENTER
+            ){
+                (getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager).hideSoftInputFromWindow(search.windowToken,0)
+                var filteredBooks: List<ImageItem>
+                if(temporary.isEmpty())
+                    filteredBooks = allBooks
+                else {
+                    filteredBooks = allBooks.filter { book ->
+                        book.headLine.contains(temporary, ignoreCase = true) || book.author.contains(temporary, ignoreCase = true)
+                    }
+                }
+                search.clearFocus()
+                search.text.clear()
+                adapter.update(filteredBooks)
+                return@setOnEditorActionListener true
+            }
+            false
+        }
 //        val adapter = ImageListAdapter(this@MainActivity, items) {item ->
 //            val intent = Intent(this@MainActivity,BookActivity::class.java)
 //            intent.putExtra("SIZE",item.size)
-//            intent.putExtra("TITLE",item.headLine)
+//            intent.putExtra("TITLE",item.headLineasd)
 //            intent.putExtra("PATH",item.url)
 //            intent.putExtra("ID",0)
 //            startActivity(intent)

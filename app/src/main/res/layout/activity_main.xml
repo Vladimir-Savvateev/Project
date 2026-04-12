@@ -6,6 +6,13 @@
     android:orientation="vertical"
     android:gravity="center_horizontal"
     android:background="#FAF0E6">
+    <EditText
+        android:id="@+id/main_search"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:inputType="text"
+        android:hint="@string/Search_hint"
+        />
    <ListView
        android:id="@+id/main_listView"
        android:layout_width="match_parent"
