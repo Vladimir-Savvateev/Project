@@ -1,6 +1,5 @@
 package com.example.myapplication
 
-import android.content.Context
 import android.os.Bundle
 import android.widget.ListView
 import androidx.activity.enableEdgeToEdge
@@ -8,17 +7,21 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import android.content.Intent
-import android.util.Log
+import android.content.SharedPreferences
 import android.view.KeyEvent
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import androidx.lifecycle.lifecycleScope
 import android.widget.Toast
 import android.widget.EditText
-import androidx.core.content.edit
+import androidx.appcompat.widget.AppCompatButton
 import kotlinx.coroutines.launch
 
 
+
+fun isInHistory(book: ImageItem,prefs: SharedPreferences): Boolean{
+    return prefs.getInt(book.headLine,-1) != -1
+}
 fun genreChek(book: ImageItem, arg: String): Boolean {
     for(genre in book.genres){
         if(genre.contains(arg, ignoreCase = true))
@@ -77,7 +80,7 @@ class MainActivity : AppCompatActivity() {
                 actionId == EditorInfo.IME_ACTION_SEARCH ||
                 event?.keyCode == KeyEvent.KEYCODE_ENTER
             ){
-                (getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager).hideSoftInputFromWindow(search.windowToken,0)
+                (getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager).hideSoftInputFromWindow(search.windowToken,0)
                 var filteredBooks: List<ImageItem>
                 if(temporary.isEmpty())
                     filteredBooks = allBooks
@@ -87,16 +90,27 @@ class MainActivity : AppCompatActivity() {
                     }
                 }
                 search.clearFocus()
-                search.text.clear()
                 adapter.update(filteredBooks)
                 return@setOnEditorActionListener true
             }
             false
         }
+        val history = findViewById<AppCompatButton>(R.id.main_history)
+        history.setOnClickListener {
+            val prefs = getSharedPreferences("page_saves", MODE_PRIVATE)
+            val booksInHistory: List<ImageItem> = allBooks.filter { book->
+                isInHistory(book,prefs)
+            }
+            val intent = Intent(this@MainActivity, HistoryActivity::class.java)
+            intent.putExtra(    "BOOKS",ArrayList(booksInHistory))
+            startActivity(intent)
+
+
+        }
 //        val adapter = ImageListAdapter(this@MainActivity, items) {item ->
 //            val intent = Intent(this@MainActivity,BookActivity::class.java)
 //            intent.putExtra("SIZE",item.size)
-//            intent.putExtra("TITLE",item.headLineasd)
+//            intent.putExtra("TITLE",item.headLine)
 //            intent.putExtra("PATH",item.url)
 //            intent.putExtra("ID",0)
 //            startActivity(intent)

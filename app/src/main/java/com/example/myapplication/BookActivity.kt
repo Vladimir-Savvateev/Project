@@ -96,7 +96,6 @@ class BookActivity : AppCompatActivity() {
         back.setOnClickListener {
             finish()
         }
-        Log.d("TAG", "https://raw.githubusercontent.com/Vladimir-Savvateev/books/refs/heads/main/" + "text/" + path + "_" + (id + 1).toString() + ".txt")
     }
 
 
@@ -128,6 +127,7 @@ class BookActivity : AppCompatActivity() {
         val scroll = findViewById<androidx.core.widget.NestedScrollView>(R.id.scroll_view)
         prefs.edit {
             putInt(title + "scroll", scroll.scrollY)
+            putInt(title, id)
         }
         if( scroll.getChildAt(0).height - scroll.height == scroll.scrollY) {
             prefs.edit { remove(title + "scroll") }

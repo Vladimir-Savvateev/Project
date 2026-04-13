@@ -2,27 +2,26 @@
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/main"
+    android:id="@+id/history"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#FAF0E6">
 
     <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/main_history"
+        android:id="@+id/history_back"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="@+id/history_search"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/main_search"
-        app:layout_constraintTop_toTopOf="@+id/main_search"
-        android:text="@string/history_button"
+        app:layout_constraintStart_toEndOf="@+id/history_search"
+        app:layout_constraintTop_toTopOf="@+id/history_search"
+        android:text="На главную"
         android:background="#E8E0D8"
         android:textColor="#3E2723"
         android:textSize="14sp"
         />
-
     <EditText
-        android:id="@+id/main_search"
+        android:id="@+id/history_search"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
@@ -34,7 +33,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
     <ListView
-        android:id="@+id/main_listView"
+        android:id="@+id/history_listView"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginTop="16dp"
@@ -43,6 +42,6 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/main_search" />
+        app:layout_constraintTop_toBottomOf="@+id/history_search" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
