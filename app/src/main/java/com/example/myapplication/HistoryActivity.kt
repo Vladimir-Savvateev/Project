@@ -9,6 +9,12 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import android.util.Log
+import android.view.KeyEvent
+import android.view.inputmethod.EditorInfo
+import android.view.inputmethod.InputMethodManager
+import android.widget.EditText
+import androidx.appcompat.widget.AppCompatButton
+
 
 class HistoryActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -21,6 +27,10 @@ class HistoryActivity : AppCompatActivity() {
             insets
         }
         val listView = findViewById<ListView>(R.id.history_listView)
+        val back = findViewById<AppCompatButton>(R.id.history_back)
+        back.setOnClickListener {
+            finish()
+        }
         @Suppress("UNCHECKED_CAST")
         val allBooks = intent.getSerializableExtra("BOOKS", ArrayList::class.java) as? ArrayList<ImageItem>
         if (allBooks == null || allBooks.isEmpty()) {
@@ -33,7 +43,33 @@ class HistoryActivity : AppCompatActivity() {
             intent.putExtra("SIZE", item.size)
             intent.putExtra("TITLE", item.headLine)
             intent.putExtra("PATH", item.url)
+            intent.putExtra("HISTORY",true)
             startActivity(intent)
+        }
+        val search = findViewById<EditText>(R.id.history_search)
+
+        search.setOnEditorActionListener{ _, actionId, event ->
+            val temporary = search.text.toString()
+            if (actionId == EditorInfo.IME_ACTION_DONE ||
+                actionId == EditorInfo.IME_ACTION_GO ||
+                actionId == EditorInfo.IME_ACTION_SEND ||
+                actionId == EditorInfo.IME_ACTION_SEARCH ||
+                event?.keyCode == KeyEvent.KEYCODE_ENTER
+            ){
+                (getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager).hideSoftInputFromWindow(search.windowToken,0)
+                var filteredBooks: List<ImageItem>
+                if(temporary.isEmpty())
+                    filteredBooks = allBooks
+                else {
+                    filteredBooks = allBooks.filter { book ->
+                        book.headLine.contains(temporary, ignoreCase = true) || book.author.contains(temporary, ignoreCase = true) || genreChek(book,temporary)
+                    }
+                }
+                search.clearFocus()
+                adapter.update(filteredBooks)
+                return@setOnEditorActionListener true
+            }
+            false
         }
         listView.adapter = adapter
     }

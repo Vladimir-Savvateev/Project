@@ -92,6 +92,8 @@ class BookActivity : AppCompatActivity() {
 
         bookTitle.text = title
         val back = findViewById<Button>(R.id.back)
+        if(intent.getBooleanExtra("HISTORY",false))
+            back.text = "Назад к истории"
         content.text = "Идёт загрузка подождите"
         back.setOnClickListener {
             finish()
