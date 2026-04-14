@@ -13,10 +13,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MyApplication">
         <activity
-            android:name=".HistoryActivity"
-            android:exported="false" />
-        <activity
-            android:name=".MainActivity"
+            android:name=".RegistrationActivity"
             android:exported="true"
             android:screenOrientation="portrait">
             <intent-filter>
@@ -26,7 +23,16 @@
             </intent-filter>
         </activity>
         <activity
+            android:name=".HistoryActivity"
+            android:exported="false"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".MainActivity"
+            android:exported="false"
+            android:screenOrientation="portrait"/>
+        <activity
             android:name=".BookActivity"
+            android:exported="false"
             android:screenOrientation="portrait" />
     </application>
 

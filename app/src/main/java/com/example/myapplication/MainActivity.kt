@@ -107,18 +107,18 @@ class MainActivity : AppCompatActivity() {
         }
 
 
-        lifecycleScope.launch {
-            val success = downloader.uploadFile(
-                username = "user_123",
-                fileName = "test.json",
-                contentToUpload = """{"username": 42, "password": 1337}"""
-            )
-            if (success) {
-                Toast.makeText(this@MainActivity, "Данные сохранены!", Toast.LENGTH_SHORT).show()
-            } else {
-                Toast.makeText(this@MainActivity, "Ошибка сохранения", Toast.LENGTH_SHORT).show()
-            }
-        }
+//        lifecycleScope.launch {
+//            val success = downloader.uploadFile(
+//                username = "user_123",
+//                fileName = "test.json",
+//                contentToUpload = """{"username": 42, "password": 1337}"""
+//            )
+//            if (success) {
+//                Toast.makeText(this@MainActivity, "Данные сохранены!", Toast.LENGTH_SHORT).show()
+//            } else {
+//                Toast.makeText(this@MainActivity, "Ошибка сохранения", Toast.LENGTH_SHORT).show()
+//            }
+//        }
 
 
 //        val adapter = ImageListAdapter(this@MainActivity, items) {item ->

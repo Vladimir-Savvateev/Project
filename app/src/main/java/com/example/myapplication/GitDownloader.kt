@@ -33,10 +33,20 @@ class GitDownloader {
                 Result.success(body)
             }
             else {
-                Result.failure(IOException("Ошибка Загрузки"))
+                val errorMessage = when (response.code) {
+                    404 -> "404"
+                    403 -> "403"
+                    else -> "Ошибка загрузки: ${response.code}"
+                }
+                Result.failure(IOException(errorMessage))
             }
-        } catch (_: Exception) {
-            Result.failure(IOException("Ошибка Загрузки"))
+        } catch (e: Exception) {
+            val errorMessage = when (e) {
+                is java.net.UnknownHostException -> "NO_INTERNET"
+                is java.net.SocketTimeoutException -> "TIMEOUT"
+                else -> "Ошибка: ${e.message}"
+            }
+            Result.failure(IOException(errorMessage))
         }
     }
     suspend fun loadBooks(): Result<List<ImageItem>> = withContext(Dispatchers.IO) {
@@ -48,6 +58,29 @@ class GitDownloader {
                 Result.success(response.books)
             } else {
                 Result.failure(IOException("Ошибка Загрузки"))
+            }
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+    suspend fun authInfo(username: String): Result<AuthData> = withContext(Dispatchers.IO) {
+        try {
+            val url = "https://raw.githubusercontent.com/Vladimir-Savvateev/UserDataForMyBooks/refs/heads/main/$username/userInfo.json"
+            val result = loadTextFile(url)
+            if (result.isSuccess) {
+                val jsonString = result.getOrNull()
+                val response = Gson().fromJson(jsonString, AuthData::class.java)
+                Result.success(response)
+            } else {
+                val exception = result.exceptionOrNull()
+                val userMessage = when (exception?.message) {
+                    "404" -> "Пользователь с таким логином не найден"
+                    "401" -> "Ошибка авторизации. Обновите приложение."
+                    "NO_INTERNET" -> "Нет подключения к интернету"
+                    "TIMEOUT" -> "Превышен таймаут. Проверьте соединение."
+                    else -> exception?.message ?: "Неизвестная ошибка"
+                }
+                Result.failure(IOException(userMessage))
             }
         } catch (e: Exception) {
             Result.failure(e)
@@ -65,7 +98,7 @@ class GitDownloader {
             } else {
                 null
             }
-            val json =   if(sha == null) {
+            val json = if(sha == null) {
                 """
             {
                 "message": "Получены данные от пользователя",
