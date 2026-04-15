@@ -105,8 +105,8 @@ class MainActivity : AppCompatActivity() {
             intent.putExtra(    "BOOKS",ArrayList(booksInHistory))
             startActivity(intent)
         }
-
-
+        val prefs = getSharedPreferences("page_saves", MODE_PRIVATE)
+        history.text = prefs.getString("USERNAME","NONE")
 //        lifecycleScope.launch {
 //            val success = downloader.uploadFile(
 //                username = "user_123",

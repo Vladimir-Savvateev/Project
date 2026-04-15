@@ -86,6 +86,16 @@ class GitDownloader {
             Result.failure(e)
         }
     }
+    suspend fun fileExists(username: String, fileName: String): Boolean = withContext(Dispatchers.IO) {
+        val url = "https://api.github.com/repos/Vladimir-Savvateev/UserDataForMyBooks/contents/$username/$fileName"
+        val getResponse = client.newCall(Request.Builder().url(url).get().build()).execute()
+        val sha = if (getResponse.isSuccessful) {
+            getResponse.body?.string()?.substringAfter("\"sha\":\"")?.substringBefore("\"")
+        } else {
+            null
+        }
+        return@withContext sha != null
+    }
 
 
     suspend fun uploadFile(username: String, fileName: String, contentToUpload: String): Boolean = withContext(Dispatchers.IO) {
