@@ -63,6 +63,27 @@ class GitDownloader {
             Result.failure(e)
         }
     }
+    suspend fun bookInfo(username: String, title: String): Result<UserBookInfo> = withContext(Dispatchers.IO) {
+        try {
+            val url = "https://raw.githubusercontent.com/Vladimir-Savvateev/UserDataForMyBooks/refs/heads/main/$username/${title}Info.json"
+            val result = loadTextFile(url)
+            if (result.isSuccess) {
+                val jsonString = result.getOrNull()
+                val response = Gson().fromJson(jsonString, UserBookInfo::class.java)
+                Result.success(response)
+            } else {
+                val exception = result.exceptionOrNull()
+                val userMessage = when (exception?.message) {
+                    "NO_INTERNET" -> "Нет подключения к интернету"
+                    "TIMEOUT" -> "Превышен таймаут. Проверьте соединение."
+                    else -> exception?.message ?: "Неизвестная ошибка"
+                }
+                Result.failure(IOException(userMessage))
+            }
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
     suspend fun authInfo(username: String): Result<AuthData> = withContext(Dispatchers.IO) {
         try {
             val url = "https://raw.githubusercontent.com/Vladimir-Savvateev/UserDataForMyBooks/refs/heads/main/$username/userInfo.json"
