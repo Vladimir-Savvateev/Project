@@ -65,8 +65,12 @@ class GitDownloader {
     }
     suspend fun bookInfo(username: String, title: String): Result<UserBookInfo> = withContext(Dispatchers.IO) {
         try {
-            val url = "https://raw.githubusercontent.com/Vladimir-Savvateev/UserDataForMyBooks/refs/heads/main/$username/" + title + "Info.json"
-            val result = loadTextFile(url)
+            val url = "https://api.github.com/repos/Vladimir-Savvateev/UserDataForMyBooks/contents/$username/${title}Info.json"
+            val apiResponse = client.newCall(Request.Builder().url(url).get().build()).execute()
+            val jsonForApi = apiResponse.body?.string() ?: return@withContext Result.failure(IOException("Нет ответа"))
+            val downloadUrl = jsonForApi.substringAfter("\"download_url\":\"").substringBefore("\"")
+
+            val result = loadTextFile(downloadUrl)
             if (result.isSuccess) {
                 val jsonString = result.getOrNull()
                 val response = Gson().fromJson(jsonString, UserBookInfo::class.java)

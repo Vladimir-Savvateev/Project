@@ -1,5 +1,6 @@
 package com.example.myapplication
 
+import android.content.Context
 import android.os.Bundle
 import android.widget.ListView
 import androidx.activity.enableEdgeToEdge
@@ -8,6 +9,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import android.content.Intent
 import android.content.SharedPreferences
+import android.util.Log
 import android.view.KeyEvent
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
@@ -15,6 +17,8 @@ import androidx.lifecycle.lifecycleScope
 import android.widget.Toast
 import android.widget.EditText
 import androidx.appcompat.widget.AppCompatButton
+import androidx.core.content.edit
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 
 
@@ -49,14 +53,31 @@ class MainActivity : AppCompatActivity() {
 //            ImageItem(4,"gore_ot_uma","Горе от ума",4),
 //            ImageItem(5,"mertvye_dushi","Мёртвые души",12)
 //        )
+        val prefs = getSharedPreferences("page_saves", Context.MODE_PRIVATE)
         lateinit var adapter: ImageListAdapter
         val downloader = GitDownloader()
+        val username = prefs.getString("USERNAME","NONE") ?: "NONE"
         var allBooks: List<ImageItem> = emptyList()
         val search = findViewById<EditText>(R.id.main_search)
         lifecycleScope.launch {
             val result = downloader.loadBooks()
             result.onSuccess { items ->
                 allBooks = items
+                coroutineScope {
+                    allBooks.forEach { book ->
+                        launch {
+                            val progress = downloader.bookInfo(username, book.url).getOrNull()
+                            if (progress != null) {
+                                prefs.edit {
+                                    putInt(book.url, progress.curPage)
+                                    putInt("${book.url}scroll", progress.curScroll)
+                                }
+                                Log.d("SYNC_CHECK","${prefs.getInt(book.url,0)}")
+                                Log.d("SYNC_CHECK","${prefs.getInt("${book.url}scroll",0)}")
+                            }
+                        }
+                    }
+                }
                 adapter = ImageListAdapter(this@MainActivity, items) { item ->
                     val intent = Intent(this@MainActivity, BookActivity::class.java)
                     intent.putExtra("SIZE", item.size)
@@ -105,7 +126,6 @@ class MainActivity : AppCompatActivity() {
             intent.putExtra(    "BOOKS",ArrayList(booksInHistory))
             startActivity(intent)
         }
-        val prefs = getSharedPreferences("page_saves", MODE_PRIVATE)
         history.text = prefs.getString("USERNAME","NONE")
 //        lifecycleScope.launch {
 //            val success = downloader.uploadFile(
