@@ -24,7 +24,7 @@ class BookActivity : AppCompatActivity() {
 
     lateinit var title: String
     var id = 0
-    var curScroll = 0
+    var curScroll = 0f
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -99,20 +99,27 @@ class BookActivity : AppCompatActivity() {
 
 
     override fun onResume(){
+        val bookTitle = findViewById<TextView>(R.id.book_title)
+        val density = resources.displayMetrics.density
+        Log.d("MY_TAG", "sadadsada")
         super.onResume()
         lifecycleScope.launch{
             val path = intent.getStringExtra("PATH")!!
             val prefs = getSharedPreferences("page_saves", Context.MODE_PRIVATE)
             val downloader = GitDownloader()
             val scroll = findViewById<androidx.core.widget.NestedScrollView>(R.id.scroll_view)
-            curScroll = prefs.getInt("${path}scroll",0)
+            curScroll = try {
+                prefs.getFloat("${path}scroll", 0f)
+            } catch (_: ClassCastException) {
+                prefs.getInt("${path}scroll", 0).toFloat()
+            }
             val content = findViewById<TextView>(R.id.book_content)
             val result = downloader.loadTextFile("https://raw.githubusercontent.com/Vladimir-Savvateev/books/refs/heads/main/" + "text/" + path + "_" + (id + 1).toString() + ".txt")
             result.onSuccess { res ->
                 content.text = res
-                scroll.post {
-                    scroll.scrollTo(0, curScroll)
-                }
+                    scroll.post {
+                        scroll.scrollTo(0, (curScroll * density).toInt())
+                    }
             }
             result.onFailure { error ->
                 if(error.message.toString() == "403")
@@ -123,7 +130,10 @@ class BookActivity : AppCompatActivity() {
         }
     }
 
+
     override fun onPause() {
+        val bookTitle = findViewById<TextView>(R.id.book_title)
+        val density = resources.displayMetrics.density
         super.onPause()
         val downloader = GitDownloader()
         val path = intent.getStringExtra("PATH")!!
@@ -134,12 +144,12 @@ class BookActivity : AppCompatActivity() {
             downloader.uploadFile(username,"${path}Info.json", """
     {
         "curPage": $id,
-        "curScroll": ${scroll.scrollY}
+        "curScroll": ${scroll.scrollY.toFloat() / density}
     }
 """.trimIndent())
         }
         prefs.edit {
-            putInt("${path}scroll", scroll.scrollY)
+            putFloat("${path}scroll", scroll.scrollY.toFloat()  / density)
             putInt(path, id)
         }
         Log.d("MY_TAG", scroll.scrollY.toString())

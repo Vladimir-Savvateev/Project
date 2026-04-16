@@ -70,10 +70,10 @@ class MainActivity : AppCompatActivity() {
                             if (progress != null) {
                                 prefs.edit {
                                     putInt(book.url, progress.curPage)
-                                    putInt("${book.url}scroll", progress.curScroll)
+                                    putFloat("${book.url}scroll", progress.curScroll)
                                 }
                                 Log.d("SYNC_CHECK","${prefs.getInt(book.url,0)}")
-                                Log.d("SYNC_CHECK","${prefs.getInt("${book.url}scroll",0)}")
+                                Log.d("SYNC_CHECK","${prefs.getFloat("${book.url}scroll",0f)}")
                             }
                         }
                     }
