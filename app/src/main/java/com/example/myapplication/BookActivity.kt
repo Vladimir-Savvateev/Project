@@ -24,6 +24,7 @@ class BookActivity : AppCompatActivity() {
 
     lateinit var title: String
     var id = 0
+    var curScroll = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,14 +38,10 @@ class BookActivity : AppCompatActivity() {
         val downloader = GitDownloader()
         val size = intent.getIntExtra("SIZE",1)
         title = intent.getStringExtra("TITLE")!!
-        val prefs = getSharedPreferences("page_saves", Context.MODE_PRIVATE)
-        id = prefs.getInt(title, 0)
+        val prefs = getSharedPreferences("page_saves", MODE_PRIVATE)
         val path = intent.getStringExtra("PATH")!!
+        id = prefs.getInt(path, 0)
         val scroll = findViewById<androidx.core.widget.NestedScrollView>(R.id.scroll_view)
-        if(id < 0 || id > size - 1) {
-            scroll.scrollTo(0,0)
-            id = 0
-        }
         val bookTitle = findViewById<TextView>(R.id.book_title)
         val content = findViewById<TextView>(R.id.book_content)
         val changePages = findViewById<EditText>(R.id.change_page)
@@ -104,36 +101,46 @@ class BookActivity : AppCompatActivity() {
     override fun onResume(){
         super.onResume()
         lifecycleScope.launch{
-            val size = intent.getIntExtra("SIZE",1)
             val path = intent.getStringExtra("PATH")!!
             val prefs = getSharedPreferences("page_saves", Context.MODE_PRIVATE)
             val downloader = GitDownloader()
             val scroll = findViewById<androidx.core.widget.NestedScrollView>(R.id.scroll_view)
+            curScroll = prefs.getInt("${path}scroll",0)
             val content = findViewById<TextView>(R.id.book_content)
             val result = downloader.loadTextFile("https://raw.githubusercontent.com/Vladimir-Savvateev/books/refs/heads/main/" + "text/" + path + "_" + (id + 1).toString() + ".txt")
             result.onSuccess { res ->
                 content.text = res
+                scroll.post {
+                    scroll.scrollTo(0, curScroll)
+                }
             }
             result.onFailure { error ->
-                content.text = error.message
-            }
-            scroll.post {
-                scroll.scrollTo(0, prefs.getInt(title + "scroll", 0))
+                if(error.message.toString() == "403")
+                    Toast.makeText(this@BookActivity,"Ошибка загрузки.Обновите приложение",Toast.LENGTH_SHORT).show()
+                else
+                    content.text = error.message
             }
         }
     }
 
     override fun onPause() {
         super.onPause()
+        val downloader = GitDownloader()
+        val path = intent.getStringExtra("PATH")!!
         val prefs = getSharedPreferences("page_saves", Context.MODE_PRIVATE)
         val scroll = findViewById<androidx.core.widget.NestedScrollView>(R.id.scroll_view)
-        prefs.edit {
-            putInt(title + "scroll", scroll.scrollY)
-            putInt(title, id)
+        val username = prefs.getString("USERNAME","NONE") ?: "NONE"
+        lifecycleScope.launch{
+            downloader.uploadFile(username,"${path}Info.json", """
+    {
+        "curPage": $id,
+        "curScroll": ${scroll.scrollY}
+    }
+""".trimIndent())
         }
-        if( scroll.getChildAt(0).height - scroll.height == scroll.scrollY) {
-            prefs.edit { remove(title + "scroll") }
-            prefs.edit { remove(title) }
+        prefs.edit {
+            putInt("${path}scroll", scroll.scrollY)
+            putInt(path, id)
         }
         Log.d("MY_TAG", scroll.scrollY.toString())
     }

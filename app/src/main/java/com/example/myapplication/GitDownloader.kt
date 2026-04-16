@@ -65,7 +65,7 @@ class GitDownloader {
     }
     suspend fun bookInfo(username: String, title: String): Result<UserBookInfo> = withContext(Dispatchers.IO) {
         try {
-            val url = "https://raw.githubusercontent.com/Vladimir-Savvateev/UserDataForMyBooks/refs/heads/main/$username/${title}Info.json"
+            val url = "https://raw.githubusercontent.com/Vladimir-Savvateev/UserDataForMyBooks/refs/heads/main/$username/" + title + "Info.json"
             val result = loadTextFile(url)
             if (result.isSuccess) {
                 val jsonString = result.getOrNull()
