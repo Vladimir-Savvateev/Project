@@ -1,3 +1,0 @@
-## Скачать приложение
-
-[Скачать APK](https://raw.githubusercontent.com/Vladimir-Savvateev/Project/master/MyBooks.apk)
