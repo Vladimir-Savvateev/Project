@@ -13,6 +13,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MyApplication">
         <activity
+            android:name=".AccountInfo"
+            android:exported="false" />
+        <activity
             android:name=".RegistrationActivity"
             android:exported="true"
             android:screenOrientation="portrait">
@@ -29,7 +32,7 @@
         <activity
             android:name=".MainActivity"
             android:exported="false"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait" />
         <activity
             android:name=".BookActivity"
             android:exported="false"
