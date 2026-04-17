@@ -8,7 +8,7 @@
     android:background="#FAF0E6">
 
     <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/main_history"
+        android:id="@+id/profile"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="@+id/main_search"

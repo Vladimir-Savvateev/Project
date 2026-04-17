@@ -1,5 +1,6 @@
 package com.example.myapplication
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
 import android.widget.ListView
@@ -24,7 +25,7 @@ import kotlinx.coroutines.launch
 
 
 fun isInHistory(book: ImageItem,prefs: SharedPreferences): Boolean{
-    return prefs.getInt(book.headLine,-1) != -1
+    return prefs.getInt(book.url,-1) != -1
 }
 fun genreChek(book: ImageItem, arg: String): Boolean {
     for(genre in book.genres){
@@ -34,7 +35,8 @@ fun genreChek(book: ImageItem, arg: String): Boolean {
     return false
 }
 class MainActivity : AppCompatActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
+        @SuppressLint("MissingInflatedId")
+        override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_main)
@@ -78,6 +80,10 @@ class MainActivity : AppCompatActivity() {
                         }
                     }
                 }
+                for (book in allBooks) {
+                    val saved = prefs.getInt(book.url, -1)
+                    Log.d("HISTORY", "Книга ${book.url}: saved = $saved")
+                }
                 adapter = ImageListAdapter(this@MainActivity, items) { item ->
                     val intent = Intent(this@MainActivity, BookActivity::class.java)
                     intent.putExtra("SIZE", item.size)
@@ -116,17 +122,22 @@ class MainActivity : AppCompatActivity() {
             }
             false
         }
-        val history = findViewById<AppCompatButton>(R.id.main_history)
-        history.setOnClickListener {
-            val prefs = getSharedPreferences("page_saves", MODE_PRIVATE)
-            val booksInHistory: List<ImageItem> = allBooks.filter { book->
-                isInHistory(book,prefs)
-            }
-            val intent = Intent(this@MainActivity, HistoryActivity::class.java)
-            intent.putExtra(    "BOOKS",ArrayList(booksInHistory))
+        val profile = findViewById<AppCompatButton>(R.id.profile)
+        profile.text = prefs.getString("USERNAME","NONE")
+        profile.setOnClickListener {
+            val intent = Intent(this@MainActivity, AccountInfo::class.java)
+            intent.putExtra("BOOKS", ArrayList(allBooks))
             startActivity(intent)
         }
-        history.text = prefs.getString("USERNAME","NONE")
+//        history.setOnClickListener {
+//            val prefs = getSharedPreferences("page_saves", MODE_PRIVATE)
+//            val booksInHistory: List<ImageItem> = allBooks.filter { book->
+//                isInHistory(book,prefs)
+//            }
+//            val intent = Intent(this@MainActivity, HistoryActivity::class.java)
+//            intent.putExtra(    "BOOKS",ArrayList(booksInHistory))
+//            startActivity(intent)
+//        }
 //        lifecycleScope.launch {
 //            val success = downloader.uploadFile(
 //                username = "user_123",

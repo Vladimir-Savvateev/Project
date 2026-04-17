@@ -31,8 +31,7 @@ class HistoryActivity : AppCompatActivity() {
         back.setOnClickListener {
             finish()
         }
-        @Suppress("UNCHECKED_CAST")
-        val allBooks = intent.getSerializableExtra("BOOKS", ArrayList::class.java) as? ArrayList<ImageItem>
+        val allBooks = intent.getSerializableExtra("BOOKS") as? ArrayList<ImageItem>
         if (allBooks == null || allBooks.isEmpty()) {
             Toast.makeText(this, "История пуста", Toast.LENGTH_SHORT).show()
             finish()

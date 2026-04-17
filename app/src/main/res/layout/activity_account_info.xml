@@ -7,4 +7,22 @@
     android:layout_height="match_parent"
     tools:context=".AccountInfo">
 
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/main_history"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="История"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/logout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Выйти из аккаунта"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/main_history" />
 </androidx.constraintlayout.widget.ConstraintLayout>
